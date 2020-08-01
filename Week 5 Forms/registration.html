@@ -17,33 +17,120 @@
 </style>
 </head>
 <body>
+  <?php
+  // define variables and set to empty values
+  $nameErr = $emailErr = $genderErr= $passwordErr = $PhoneErr = $ageErr = $postalErr = "";
+  $name = $email = $gender = $password = $phone = $age = $postal = "";
+  
+
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (empty($_POST["name"])) {
+        $nameErr = "Missing";
+    }
+    else {
+        $name = $_POST["name"];
+    }
+       // check if name only contains letters and whitespace
+      if (!preg_match("/^[a-zA-Z ]*$/",$name)) {
+        $nameErr = "Only letters and white space allowed";
+      }
+    }
+
+    
+    if (strlen($_POST["password"]) <= '8') {
+        $passwordErr = "Your Password Must Contain At Least 8 Characters!";
+    }
+    elseif(!preg_match("#[0-9]+#",$password)) {
+        $passwordErr = "Your Password Must Contain At Least 1 Number!";
+    }
+      elseif(!preg_match("#[A-Z]+#",$password)) {
+          $passwordErr = "Your Password Must Contain At Least 1 Capital Letter!";
+      }
+      elseif(!preg_match("#[a-z]+#",$password)) {
+          $passwordErr = "Your Password Must Contain At Least 1 Lowercase Letter!";
+      } 
+  
+
+
+    if (empty($_POST["email"])) {
+      $emailErr = "Email is required";
+    } else {
+      $email = test_input($_POST["email"]);
+      // check if e-mail address is well-formed
+      if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $emailErr = "Invalid email format";
+      }
+    }
+      
+    if (empty($_POST["phone"])) {
+      $phoneErr = "Phone Number is required";
+    } else {
+      $phone = test_input($_POST["phone"]);
+      // check if e-mail address is well-formed
+      if (!filter_var($phone, FILTER_VALIDATE_PHONE)) {
+        $emailErr = "Invalid Number format";
+      }
+    }
+
+  
+  
+    if (empty($_POST["gender"])) {
+      $genderErr = "Gender is required";
+    } else {
+      $gender = test_input($_POST["gender"]);
+    }
+  
+  
+  function test_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+  }
+  ?>  
+
+
  <h2> Registration Form </h2>
- <form>
+ <p><span class="error">* required field</span></p>
+ <form method="post" >  
+  <b>Name:</b> <input type="text" name="name" value=>
+  <span class="error">* <?php echo $nameErr;?></span>
+  <br><br>
+
+  <tr>
+    <td><b>Gender:</b></td>
+        <td>
+          <input type = "radio" name = "gender" value = "female">Female
+          <input type = "radio" name = "gender" value = "male">Male
+          <span class = "error">* <?php echo $genderErr;?></span>
+        </td>
+  </tr>
+  <br><br>
+
+    <b>Age:</b> <input type="number" name="age" value="<?php echo $age;?>">
+    <span class="error">* <?php echo $ageErr;?></span>
+    <br><br>
+
+    <b>E-mail:</b> <input type="email" name="email">
+  <br><br>
+    
+    <b>Phone number :</b> <input type="number_entered" name="phone" >
+    <span class="error">* <?php echo $phoneErr;?></span>
+    <br><br>
+    
+
+    <b>Password:</b> <input type="password" name="password">
+  <span class="error">* <?php echo $passwordErr;?></span>
+  <br><br>
 
     <div class="form">
-      <label>Name:</label>
-      <input type="text" class="form">
-    </div>
-
-    <div class="radio">
-    <p><b>Gender</b></p>
-    <label><input type="radio">Male</label>
-    <label><input type="radio">Female</label>
-    <label><input type="radio">Others</label>
-    </div>
-
-
-    <div class="form">
-    <label>Email:</label>
-    <input type="email" class="form">
-    </div>
-
-    <div class="form">
-      <label>Password:</label>
-      <input type="password" class="form">
+      <label>Postal Code:</label>
+      <input type="tel" class="form">
     </div>
 
     <button type="submit" class="button">Submit</button>
+
+
 
   </form>
   </body>
